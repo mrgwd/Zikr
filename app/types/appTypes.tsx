@@ -1,8 +1,7 @@
 export interface SebhaContextValue {
-  hasBrowserSupport: boolean
+  //hasBrowserSupport: boolean
   isListening: boolean
   counter: number
-  todayCounter: number
   selectedZikr: string
   transcript: string
   setSelectedZikr: React.Dispatch<React.SetStateAction<string>>

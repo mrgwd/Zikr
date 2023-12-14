@@ -4,17 +4,12 @@ import { SebhaContextValue, SebhaProviderProps } from '../types/appTypes'
 import { azkar } from './AzkarProvider'
 
 let SpeechRecognition: any = null
-let hasBrowserSupport: boolean
-if ('webkitSpeechRecognition' in window) {
-  SpeechRecognition = new webkitSpeechRecognition()
-  SpeechRecognition.lang = 'ar'
-}
+//let hasBrowserSupport: boolean
 let transcript: string
 
 const SebhaContext = createContext<SebhaContextValue>({
   counter: 0,
-  todayCounter: 0,
-  hasBrowserSupport: !!SpeechRecognition,
+  //hasBrowserSupport: !!SpeechRecognition,
   selectedZikr: '',
   isListening: false,
   transcript: '',
@@ -25,8 +20,8 @@ const SebhaContext = createContext<SebhaContextValue>({
 
 const SebhaProvider = ({ children }: SebhaProviderProps) => {
   const [counter, setCounter] = useState(0)
-  const [todayCounter, setTodayCounter] = useState(0)
-  const [selectedZikr, setSelectedZikr] = useState('سبحان الله')
+  const [selectedZikr, setSelectedZikr] = useState('سبحان الله وبحمده')
+  //const [hasBrowserSupport, setHasBrowserSupport] = useState(false)
   const [isListening, setIsListening] = useState(false)
   const handleResetCounter = () => {
     setCounter(0)
@@ -43,6 +38,13 @@ const SebhaProvider = ({ children }: SebhaProviderProps) => {
     SpeechRecognition.stop()
     setIsListening(false)
   }
+  useEffect(() => {
+    if ('webkitSpeechRecognition' in window) {
+      SpeechRecognition = new webkitSpeechRecognition()
+      SpeechRecognition.lang = 'ar'
+      //setHasBrowserSupport(true)
+    }
+  }, [])
   useEffect(() => {
     if (!SpeechRecognition) return
     SpeechRecognition.onresult = (event: SpeechRecognitionEvent) => {
@@ -61,13 +63,31 @@ const SebhaProvider = ({ children }: SebhaProviderProps) => {
     // setCounter((counter) => counter + newCounter)
 
     let newCounter: number = 0
-    if (selectedZikr === 'لا إله إلا الله')
-      newCounter = transcript.split('الله').length - 1
-    else if (selectedZikr === 'اللهم صلي وسلم على محمد')
-      newCounter = transcript.split('على محمد').length - 1
-    else if (selectedZikr === 'لا حول ولا قوة إلا بالله')
-      newCounter = transcript.split('قوة').length - 1
-    else newCounter = transcript.split(selectedZikr).length - 1
+    switch (selectedZikr) {
+      case 'سبحان الله وبحمده':
+        newCounter = transcript.split('سبحان').length - 1
+        break
+      case 'لا إله إلا الله':
+        newCounter = transcript.split('الله').length - 1
+        break
+      case 'حول ولا قوة إلا بالله':
+        newCounter = transcript.split('قوة').length - 1
+
+        break
+      case 'اللهم صلي وسلم على محمد':
+        newCounter = transcript.split('وسلم').length - 1
+
+        break
+      default:
+        newCounter = transcript.split(selectedZikr).length - 1
+    }
+    // if (selectedZikr === 'لا إله إلا الله')
+    //   newCounter = transcript.split('الله').length - 1
+    // else if (selectedZikr === 'اللهم صلي وسلم على محمد')
+    //   newCounter = transcript.split('على محمد').length - 1
+    // else if (selectedZikr === 'لا حول ولا قوة إلا بالله')
+    //   newCounter = transcript.split('قوة').length - 1
+    // else newCounter = transcript.split(selectedZikr).length - 1
 
     setCounter((counter) => counter + newCounter)
     console.log(newCounter, selectedZikr, transcript)
@@ -80,8 +100,7 @@ const SebhaProvider = ({ children }: SebhaProviderProps) => {
     <SebhaContext.Provider
       value={{
         counter,
-        todayCounter,
-        hasBrowserSupport,
+        //hasBrowserSupport,
         selectedZikr,
         isListening,
         transcript,

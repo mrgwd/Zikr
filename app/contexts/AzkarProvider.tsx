@@ -1,7 +1,7 @@
 import { Zikr } from '../types/appTypes'
 
 const azkar: Zikr[] = [
-  { name: 'سبحان الله', count: 0 },
+  { name: 'سبحان الله وبحمده', count: 0 },
   { name: 'الحمد لله', count: 0 },
   { name: 'لا إله إلا الله', count: 0 },
   { name: 'الله أكبر', count: 0 },
