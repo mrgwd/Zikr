@@ -1,6 +1,4 @@
-import { useContext } from 'react'
-import { SebhaContext } from '../contexts/SebhaProvider'
-import { hijriDate } from '../utils/hijriDate'
+import { hijriDate } from '@/utils/hijriDate'
 import Statistics from './statistics'
 
 export default function Footer() {

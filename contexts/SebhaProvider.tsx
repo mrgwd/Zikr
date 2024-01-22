@@ -68,6 +68,11 @@ const SebhaProvider = ({ children }: SebhaProviderProps) => {
         newCounter = transcript.split('سبحان').length - 1
         break
 
+      case 'أستغفر الله':
+      case 'استغفر الله':
+        newCounter = transcript.split('ستغفر').length - 1
+        break
+
       case 'لا إله إلا الله':
         newCounter = transcript.split('الله').length - 1
         break

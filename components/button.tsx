@@ -1,19 +1,19 @@
 import { useContext } from 'react'
-import { SebhaContext } from '../contexts/SebhaProvider'
+import { SebhaContext } from '@/contexts/SebhaProvider'
 
 export default function Button() {
-  const { isListening, handleStartLisnting, handleEndLisnting } =
+  const { isListening, handleStartListening, handleEndListening } =
     useContext(SebhaContext)
+  const buttonAnimation = () => {}
   return (
     <button
-      //disabled={isListening}
       type="button"
       className={`p-8 rounded-full ${
         !isListening
           ? 'bg-green-100 hover:scale-105 m-4'
-          : 'bg-fuchsia-100 scale-75'
-      }  transition-all`}
-      onClick={isListening ? handleEndLisnting : handleStartLisnting}
+          : 'bg-fuchsia-100 scale-75 rotate-180'
+      }  transition duration-300 ease-in-out`}
+      onClick={isListening ? handleEndListening : handleStartListening}
     >
       {!isListening ? (
         <svg

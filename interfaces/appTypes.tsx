@@ -1,12 +1,11 @@
 export interface SebhaContextValue {
-  //hasBrowserSupport: boolean
   isListening: boolean
   counter: number
   selectedZikr: string
   transcript: string
   setSelectedZikr: React.Dispatch<React.SetStateAction<string>>
-  handleStartLisnting: () => void
-  handleEndLisnting: () => void
+  handleStartListening: () => void
+  handleEndListening: () => void
 }
 
 export interface SebhaProviderProps {
