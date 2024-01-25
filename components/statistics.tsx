@@ -8,8 +8,18 @@ export default function Statistics() {
   const todayCount = azkar.find((zikr) => zikr.name === selectedZikr)?.count
   return (
     <p>
-      <span className="text-green-700">{todayCount} </span>
-      ذكر لهذا اليوم
+      <span
+        className={`${
+          todayCount
+            ? todayCount >= 1000
+              ? 'text-yellow-600'
+              : todayCount >= 100 && 'text-green-700'
+            : ''
+        }`}
+      >
+        {todayCount}{' '}
+      </span>
+      ذكراً لهذا اليوم
     </p>
   )
 }
