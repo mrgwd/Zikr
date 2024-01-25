@@ -1,8 +1,7 @@
+import { Zikr } from '@/interfaces/appTypes'
 import { useState, useEffect } from 'react'
 
-export function useLocalStorage(key: string, initialValue: any) {
-  // Get from local storage then
-  // parse stored json or if none return initialValue
+export function useLocalStorage(key: string, initialValue: Zikr[]) {
   const readValue = () => {
     if (typeof window === 'undefined') {
       return initialValue
@@ -19,9 +18,7 @@ export function useLocalStorage(key: string, initialValue: any) {
 
   const [storedValue, setStoredValue] = useState(readValue)
 
-  // Return a wrapped version of useState's setter function that ...
-  // ... persists the new value to localStorage.
-  const setValue = (value: any) => {
+  const setValue = (value: Zikr[]) => {
     try {
       setStoredValue(value)
       window.localStorage.setItem(key, JSON.stringify(value))
@@ -35,14 +32,27 @@ export function useLocalStorage(key: string, initialValue: any) {
   }, [])
 
   useEffect(() => {
-    const handle = setTimeout(() => {
+    const resetAtMidnight = () => {
       setValue(initialValue)
-    }, getTimeUntilMidnight())
-
-    return () => {
-      clearTimeout(handle)
+      localStorage.setItem(`${key}-last-update`, Date.now().toString())
     }
-  }, [])
+
+    const timeUntilMidnight = getTimeUntilMidnight()
+    const lastUpdateTime = localStorage.getItem(`${key}-last-update`)
+
+    // Check if the reset time has passed since the last update
+    if (
+      !lastUpdateTime ||
+      Date.now() - parseInt(lastUpdateTime, 10) > timeUntilMidnight
+    ) {
+      resetAtMidnight()
+    }
+
+    // Set up an interval to check for reset at midnight
+    const interval = setInterval(resetAtMidnight, timeUntilMidnight)
+
+    return () => clearInterval(interval)
+  }, [key, initialValue])
 
   return [storedValue, setValue]
 }
@@ -59,56 +69,3 @@ function getTimeUntilMidnight() {
   )
   return midnight.getTime() - now.getTime()
 }
-
-// import { useState, useEffect } from 'react'
-
-// export default function useLocalStorage(key: string, defaultValue: any) {
-//   const [value, setValue] = useState(() => {
-//     const storedValue = window.localStorage.getItem(key)
-//     if (storedValue) {
-//       return JSON.parse(storedValue)
-//     }
-//     window.localStorage.setItem(key, JSON.stringify(defaultValue))
-//     return defaultValue
-//   })
-
-//   useEffect(() => {
-//     window.localStorage.setItem(key, JSON.stringify(value))
-//   }, [key, value])
-
-//   return [value, setValue]
-// }
-
-// import { useState, useEffect } from 'react';
-
-// function useLocalStorage(key, initialValue) {
-//     // Get from local storage then
-//     // parse stored json or if none return initialValue
-//     const readValue = () => {
-//         if (typeof window === 'undefined') {
-//             return initialValue;
-//         }
-
-//         try {
-//             const item = window.localStorage.getItem(key);
-//             return item ? JSON.parse(item) : initialValue;
-//         } catch (error) {
-//             console.warn(`Error reading localStorage key “${key}”:`, error);
-//             return initialValue;
-//         }
-//     };
-
-//     const [storedValue, setStoredValue] = useState(readValue);
-
-//     // Return a wrapped version of useState's setter function that ...
-//     // ... persists the new value to localStorage.
-//     useEffect(() => {
-//         if (typeof window !== 'undefined') {
-//             window.localStorage.setItem(key, JSON.stringify(storedValue));
-//         }
-//     }, [key, storedValue]);
-
-//     return [storedValue, setStoredValue];
-// }
-
-// export default useLocalStorage;
