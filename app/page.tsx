@@ -6,6 +6,7 @@ import { SebhaProvider } from '@/contexts/SebhaProvider'
 import BrowserNotSupported from '@/components/browserNotSupported'
 import Footer from '@/components/footer'
 import { AzkarProvider } from '@/contexts/AzkarProvider'
+import Contribute from '@/components/contribute'
 
 export default function Home() {
   const [hasBrowserSupport, setHasbrowserSupport] = useState(false)
@@ -32,6 +33,7 @@ export default function Home() {
             )}
           </SebhaProvider>
         </AzkarProvider>
+        <Contribute />
       </div>
     </main>
   )
