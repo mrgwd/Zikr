@@ -14,7 +14,7 @@ export function AzkarProvider({ children }: { children: React.ReactNode }) {
     { name: 'الله أكبر', count: 0 },
     { name: 'استغفر الله', count: 0 },
     { name: 'لا حول ولا قوة إلا بالله', count: 0 },
-    { name: 'اللهم صلي وسلم على محمد', count: 0 },
+    { name: 'اللهم صلِّ وسلم على محمد', count: 0 },
   ])
 
   return (
