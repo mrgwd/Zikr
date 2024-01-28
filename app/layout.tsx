@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { IBM_Plex_Sans_Arabic } from 'next/font/google'
 import './globals.css'
+import { Analytics } from '@vercel/analytics/react'
 
 const ibm_plex_sans_arabic = IBM_Plex_Sans_Arabic({
   weight: '400',
@@ -20,7 +21,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={ibm_plex_sans_arabic.className}>{children}</body>
+      <body className={ibm_plex_sans_arabic.className}>
+        {children}
+        <Analytics />
+      </body>
     </html>
   )
 }
