@@ -2,70 +2,72 @@ import { Zikr } from '@/interfaces/appTypes'
 import { useState, useEffect } from 'react'
 
 export function useLocalStorage(key: string, initialValue: Zikr[]) {
-  const readValue = () => {
-    if (typeof window === 'undefined') {
-      return initialValue
-    }
+  const [storedValue, setStoredValue] = useState(() => {
+    if (typeof window === 'undefined') return initialValue
+    const item = window.localStorage.getItem(key)
+    return item ? JSON.parse(item) : initialValue
+  })
 
-    try {
-      const item = window.localStorage.getItem(key)
-      return item ? JSON.parse(item) : initialValue
-    } catch (error) {
-      console.warn(`Error reading localStorage key “${key}”:`, error)
-      return initialValue
-    }
+  const resetValue = () => {
+    setStoredValue(initialValue)
   }
 
-  const [storedValue, setStoredValue] = useState(readValue)
-
-  const setValue = (value: Zikr[]) => {
-    try {
-      setStoredValue(value)
-      window.localStorage.setItem(key, JSON.stringify(value))
-    } catch (error) {
-      console.warn(`Error setting localStorage key “${key}”:`, error)
-    }
+  const resetAtMidnight = () => {
+    const nextMidnight = new Date().setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000
+    const timeUntilMidnight = nextMidnight - new Date().getTime()
+    const timeout = setTimeout(resetValue, timeUntilMidnight)
+    return () => clearTimeout(timeout)
   }
 
   useEffect(() => {
-    setStoredValue(readValue())
-  }, [])
+    localStorage.setItem(key, JSON.stringify(storedValue))
+  })
 
-  useEffect(() => {
-    const resetAtMidnight = () => {
-      setValue(initialValue)
-      localStorage.setItem(`${key}-last-update`, Date.now().toString())
-    }
+  useEffect(resetAtMidnight)
 
-    const timeUntilMidnight = getTimeUntilMidnight()
-    const lastUpdateTime = localStorage.getItem(`${key}-last-update`)
+  return [storedValue, setStoredValue]
 
-    // Check if the reset time has passed since the last update
-    if (
-      !lastUpdateTime ||
-      Date.now() - parseInt(lastUpdateTime, 10) > timeUntilMidnight
-    ) {
-      resetAtMidnight()
-    }
+  //   const readValue = () => {
+  //     if (typeof window === 'undefined') {
+  //       return initialValue
+  //     }
 
-    // Set up an interval to check for reset at midnight
-    const interval = setInterval(resetAtMidnight, timeUntilMidnight)
+  //     try {
+  //       const item = window.localStorage.getItem(key)
+  //       return item ? JSON.parse(item) : initialValue
+  //     } catch (error) {
+  //       console.warn(`Error reading localStorage key “${key}”:`, error)
+  //       return initialValue
+  //     }
+  //   }
 
-    return () => clearInterval(interval)
-  }, [key, initialValue])
+  //   const [storedValue, setStoredValue] = useState(readValue)
 
-  return [storedValue, setValue]
-}
+  //   const setValue = (value: Zikr[]) => {
+  //     try {
+  //       setStoredValue(value)
+  //       window.localStorage.setItem(key, JSON.stringify(value))
+  //     } catch (error) {
+  //       console.warn(`Error setting localStorage key “${key}”:`, error)
+  //     }
+  //   }
 
-function getTimeUntilMidnight() {
-  const now = new Date()
-  const midnight = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate() + 1,
-    0,
-    0,
-    0,
-  )
-  return midnight.getTime() - now.getTime()
+  //   useEffect(() => {
+  //     setStoredValue(readValue())
+  //   }, [])
+
+  //   return [storedValue, setValue]
+  // }
+
+  // function getTimeUntilMidnight() {
+  //   const now = new Date()
+  //   const midnight = new Date(
+  //     now.getFullYear(),
+  //     now.getMonth(),
+  //     now.getDate() + 1,
+  //     0,
+  //     0,
+  //     0,
+  //   ) // Wed Jan 31 2024
+  //   return midnight.getTime() - now.getTime() //26201254
 }
