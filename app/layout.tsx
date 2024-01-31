@@ -12,6 +12,10 @@ export const metadata: Metadata = {
   title: 'Zikr: A voice counter',
   description:
     'A simple tool to help you count your zikr while working, studying, or focusing on something else.',
+  metadataBase: new URL('https://zikr-ptbddny9w-muhammadr.vercel.app'),
+  openGraph: {
+    images: '/opengraph-image.jpg',
+  },
 }
 
 export default function RootLayout({
