@@ -1,4 +1,5 @@
 import { Zikr } from '@/interfaces/appTypes'
+import { presentDate } from '@/utils/getPresentDate'
 import { useState, useEffect } from 'react'
 
 export function useLocalStorage(key: string, initialValue: Zikr[]) {
@@ -13,18 +14,21 @@ export function useLocalStorage(key: string, initialValue: Zikr[]) {
   }
 
   const resetAtMidnight = () => {
-    const now = new Date()
-    const nextMidnight = new Date(now)
-    nextMidnight.setHours(24, 0, 0, 0)
-    const timeUntilMidnight = nextMidnight.getTime() - now.getTime()
-    const timeout = setTimeout(resetValue, timeUntilMidnight)
-    return () => clearTimeout(timeout)
+    if (typeof window === 'undefined') return
+    const lastReset = window.localStorage.getItem('lastReset')
+    if (!lastReset) {
+      window.localStorage.setItem('lastReset', presentDate.toString())
+    } else if (presentDate.getTime() !== new Date(lastReset).getTime()) {
+      console.log('reset')
+      resetValue()
+      window.localStorage.setItem('lastReset', presentDate.toString())
+    }
   }
 
   useEffect(() => {
     localStorage.setItem(key, JSON.stringify(storedValue))
-  }, [])
+    resetAtMidnight()
+  })
 
-  useEffect(resetAtMidnight)
   return [storedValue, setStoredValue]
 }
