@@ -76,12 +76,18 @@ const SebhaProvider = ({ children }: SebhaProviderProps) => {
         newCounter = transcript.split('الله').length - 1
         break
 
-      case 'حول ولا قوة إلا بالله':
+      case 'لا حول ولا قوة إلا بالله':
+      case 'لا حول ولا قوه الا بالله':
         newCounter = transcript.split('ولا قو').length - 1
         break
 
       case 'اللهم صلِّ وسلم على محمد':
-        newCounter = transcript.split('وسلم').length - 1
+        newCounter = transcript.split('وسلم ع').length - 1
+        break
+
+      case 'الله أكبر':
+      case 'الله اكبر':
+        newCounter = transcript.split('كبر').length - 1
         break
 
       default:
