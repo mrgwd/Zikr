@@ -3,12 +3,17 @@ import { Moon, Sun } from './icons'
 
 export default function DarkMode() {
   const [isDark, setIsDark] = useState<boolean>(() => {
-    const savedMode = localStorage.getItem('darkMode')
-    return savedMode ? JSON.parse(savedMode) : false
+    if (typeof window !== 'undefined') {
+      const savedMode = localStorage.getItem('darkMode')
+      return savedMode ? JSON.parse(savedMode) : false
+    }
+    return false
   })
 
   useEffect(() => {
-    localStorage.setItem('darkMode', JSON.stringify(isDark))
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('darkMode', JSON.stringify(isDark))
+    }
     const htmlClassList = document.querySelector('html')?.classList
     if (isDark) {
       htmlClassList?.add('dark')
