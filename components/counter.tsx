@@ -6,8 +6,8 @@ export default function Counter() {
   return (
     <p
       className={`${
-        !isListening ? 'h-0' : 'h-8'
-      } transition-all mt-4 overflow-hidden`}
+        !isListening ? 'opacity-0' : 'opacity-100 mt-4'
+      } transition-all duration-500 mt-2 cursor-default font-bold`}
     >
       {counter}
     </p>
