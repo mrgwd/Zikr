@@ -19,7 +19,7 @@ export default function Statistics() {
       >
         {todayCount}{' '}
       </span>
-      ذكراً لهذا اليوم
+      ذكرًا هذا اليوم
     </p>
   )
 }
