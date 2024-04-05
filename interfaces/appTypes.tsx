@@ -16,3 +16,8 @@ export interface Zikr {
   name: string
   count: number
 }
+// type HexColor = `#${string & { length: 3 | 6 }}`
+export interface IconProps {
+  className?: string
+  color?: string
+}
