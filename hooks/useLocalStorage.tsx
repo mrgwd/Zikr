@@ -1,16 +1,30 @@
-import { Zikr } from '@/interfaces/appTypes'
 import { presentDate } from '@/utils/getPresentDate'
 import { useState, useEffect } from 'react'
 
-export function useLocalStorage(key: string, initialValue: Zikr[]) {
-  const [storedValue, setStoredValue] = useState(() => {
-    if (typeof window === 'undefined') return initialValue
-    const item = window.localStorage.getItem(key)
-    return item ? JSON.parse(item) : initialValue
-  })
+export function useLocalStorage(
+  key: string,
+  initialValue: any,
+  resetAtMidNight: boolean = false,
+) {
+  const [storedValue, setStoredValue] = useState<any>(null)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const savedValue = localStorage.getItem(key)
+    if (savedValue) setStoredValue(JSON.parse(savedValue))
+    else {
+      setStoredValue(initialValue)
+      localStorage.setItem(key, JSON.stringify(initialValue))
+    }
+  }, [])
+
+  const setValue = (value: any) => {
+    setStoredValue(value)
+    localStorage.setItem(key, JSON.stringify(value))
+  }
 
   const resetValue = () => {
-    setStoredValue(initialValue)
+    setValue(initialValue)
   }
 
   const resetAtMidnight = () => {
@@ -18,7 +32,9 @@ export function useLocalStorage(key: string, initialValue: Zikr[]) {
     const lastReset = window.localStorage.getItem('lastReset')
     if (!lastReset) {
       window.localStorage.setItem('lastReset', presentDate.toString())
-    } else if (presentDate.getTime() !== new Date(lastReset).getTime()) {
+    } else if (
+      presentDate.toDateString() !== new Date(lastReset).toDateString()
+    ) {
       console.log('reset')
       resetValue()
       window.localStorage.setItem('lastReset', presentDate.toString())
@@ -26,9 +42,8 @@ export function useLocalStorage(key: string, initialValue: Zikr[]) {
   }
 
   useEffect(() => {
-    localStorage.setItem(key, JSON.stringify(storedValue))
-    resetAtMidnight()
-  })
+    if (resetAtMidNight) resetAtMidnight()
+  }, [resetAtMidNight])
 
-  return [storedValue, setStoredValue]
+  return [storedValue, setValue]
 }
