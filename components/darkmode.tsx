@@ -1,47 +1,37 @@
-import { useEffect, useState } from 'react'
-import { Moon, Sun } from './icons'
-
+import { useEffect, useState } from "react";
+import { Moon, Sun } from "./icons";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 export default function DarkMode() {
-  const [isDark, setIsDark] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      const savedMode = localStorage.getItem('darkMode')
-      return savedMode ? JSON.parse(savedMode) : false
-    }
-    return false
-  })
-
+  const [isDark, setIsDark] = useLocalStorage("darkMode", false);
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('darkMode', JSON.stringify(isDark))
-    }
-    const htmlClassList = document.querySelector('html')?.classList
+    const htmlClassList = document.querySelector("html")?.classList;
     if (isDark) {
-      htmlClassList?.add('dark')
+      htmlClassList?.add("dark");
     } else {
-      htmlClassList?.remove('dark')
+      htmlClassList?.remove("dark");
     }
-  }, [isDark])
+  }, [isDark]);
 
   const handleDarkMode = () => {
-    setIsDark((prev) => !prev)
-  }
+    setIsDark(!isDark);
+  };
 
   return (
     <button
       type="button"
       onClick={handleDarkMode}
-      className="absolute top-6 right-14"
+      className="absolute right-14 top-6"
     >
       <Moon
-        className={`fill-zinc-700 dark:fill-zinc-200 absolute transition-all duration-500 ease-in-out ${
-          isDark && 'rotate-180 opacity-0'
+        className={`absolute fill-dark-secondary transition-all duration-500 ease-in-out dark:fill-light-secondary ${
+          isDark && "rotate-180 opacity-0"
         }`}
       />
       <Sun
-        className={`fill-zinc-700 dark:fill-zinc-200 absolute transition-all duration-500 ease-in-out ${
-          !isDark && '-rotate-180 opacity-0'
+        className={`absolute fill-dark-secondary transition-all duration-500 ease-in-out dark:fill-light-secondary ${
+          !isDark && "-rotate-180 opacity-0"
         }`}
       />
     </button>
-  )
+  );
 }
