@@ -1,7 +1,7 @@
 export default function BrowserNotSupported() {
   return (
-    <div className="h-screen flex flex-col justify-center">
-      <div className="-translate-y-1/4 flex flex-col items-center">
+    <div className="flex h-screen flex-col justify-center">
+      <div className="flex -translate-y-1/4 flex-col items-center">
         <div>
           <svg
             className="w-64 sm:w-96"
@@ -66,12 +66,12 @@ export default function BrowserNotSupported() {
           </svg>
         </div>
         <div>
-          <h1 className="font-bold text-xl dark:text-zinc-200">
+          <h1 className="dark:text-light text-xl font-bold">
             لا يدعم متصفحك هذه الخاصية
           </h1>
-          <div className="flex items-center gap-3 mt-1" dir="rtl">
+          <div className="mt-1 flex items-center gap-3">
             <p className="font-semibold">جرب أحد المتصفحات التالية:</p>
-            <div className="flex gap-2 child:child:w-6">
+            <div className="child:child:w-6 flex gap-2">
               <div>
                 <svg
                   width="35"
@@ -124,5 +124,5 @@ export default function BrowserNotSupported() {
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-import { Bug, GitHub } from './icons'
+import { Bug, GitHub } from "./icons";
 
 export default function Contribute() {
   return (
@@ -6,20 +6,19 @@ export default function Contribute() {
       <a
         href="https://github.com/mrgwd/Zikr"
         target="_blank"
-        className="text-zinc-400 items-center justify-center hover:text-zinc-800 dark:hover:text-zinc-200 dark:text-zinc-500 flex gap-2 transition-all group"
-        dir="rtl"
+        className="group flex items-center justify-center gap-2 text-light-muted transition-all hover:text-dark-secondary dark:text-dark-muted dark:hover:text-light-secondary"
       >
         <p>ساهم في تطوير المشروع </p>
-        <GitHub className="fill-zinc-400 group-hover:fill-zinc-800 dark:group-hover:fill-zinc-200 dark:fill-zinc-500 transition-all" />
+        <GitHub className="fill-light-muted text-light-muted transition-all group-hover:fill-dark-secondary dark:fill-dark-muted dark:group-hover:fill-light-secondary" />
       </a>
       <a
         href="mailto:mogdwd@gmail.com"
         target="_blank"
-        className="flex gap-2 mt-2 text-zinc-400 items-center justify-center dark:text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 transition-all group"
+        className="group mt-2 flex items-center justify-center gap-2 text-light-muted transition-all hover:text-dark-secondary dark:text-dark-muted dark:hover:text-light-secondary"
       >
-        <Bug className="fill-zinc-400 group-hover:fill-zinc-800 dark:group-hover:fill-zinc-200 dark:fill-zinc-500 transition-all" />
         <p>بلغ عن مشلكة أو أطلب ميزة </p>
+        <Bug className="fill-light-muted transition-all group-hover:fill-dark-secondary dark:fill-dark-muted dark:group-hover:fill-light-secondary" />
       </a>
     </div>
-  )
+  );
 }
