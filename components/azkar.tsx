@@ -23,8 +23,8 @@ export default function Azkar() {
             value={zikr.name}
             className={`${
               zikr.count >= 1000
-                ? "text-yellow-600"
-                : zikr.count >= 100 && "text-green-700"
+                ? "text-secondary"
+                : zikr.count >= 100 && "text-primary"
             }`}
           >
             {`${zikr.name}`}
