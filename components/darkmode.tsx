@@ -17,11 +17,7 @@ export default function DarkMode() {
   };
 
   return (
-    <button
-      type="button"
-      onClick={handleDarkMode}
-      className="absolute right-14 top-6"
-    >
+    <button type="button" onClick={handleDarkMode}>
       <Moon
         className={`absolute fill-dark-secondary transition-all duration-500 ease-in-out dark:fill-light-secondary ${
           isDark && "rotate-180 opacity-0"
