@@ -1,20 +1,22 @@
 {
   "name": "Zikr AI",
   "short_name": "Zikr AI",
+  "description": "A smart sebha that uses AI to count your zikr for you while you are working, studying, or focusing on something else. You say the zikr, and Zikr will count it for you.",
+  "id": "zikr",
   "icons": [
     {
-      "src": "/icons/icon-192x192.png",
+      "src": "pwa/icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/icons/icon-384x384.png",
+      "src": "pwa/icons/icon-384x384.png",
       "sizes": "384x384",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icons/icon-512x512.png",
+      "src": "pwa/icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
@@ -22,20 +24,26 @@
   ],
   "screenshots": [
     {
-      "src": "images/screenshots/screenshot1.webp",
-      "sizes": "1280x720",
+      "src": "pwa/screenshots/screenshot1.webp",
+      "sizes": "485x1024",
       "type": "image/webp",
-      "form_factor": "wide",
       "label": "Homescreen of Zikr AI"
     },
     {
-      "src": "images/screenshots/screenshot2.webp",
+      "src": "pwa/screenshots/screenshot2.webp",
+      "sizes": "485x1024",
+      "type": "image/webp",
+      "label": "Dark mode of Zikr AI"
+    },
+    {
+      "src": "pwa/screenshots/screenshot3.webp",
       "sizes": "1280x720",
       "type": "image/webp",
       "form_factor": "wide",
-      "label": "Dark mode of Zikr AI"
+      "label": "Web homescreen of Zikr AI"
     }
   ],
+  "categories": ["productivity", "utilities", "lifestyle"],
   "theme_color": "#FFFFFF",
   "background_color": "#FFFFFF",
   "start_url": "/",
