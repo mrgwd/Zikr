@@ -11,6 +11,8 @@ import {
 
 import { createFileRoute, Link } from "@tanstack/react-router";
 import ZikrList from "@workspace/ui/layout/ZikrList";
+import { TopBar } from "@workspace/ui/layout/TopBar";
+import { ext } from "../utils/browser";
 
 export const Route = createFileRoute("/")({
   component: App,
@@ -51,12 +53,19 @@ function App() {
 
   useEffect(() => {
     // Check mic status
-    chrome.runtime.sendMessage({ action: "checkMicStatus" }, (response) => {
-      if (response && response.isActive) {
-        setIsActive(true);
-        setStatus("Mic is running in the background (offscreen).");
+    (async () => {
+      try {
+        const response: any = await ext.runtime.sendMessage({
+          action: "checkMicStatus",
+        });
+        if (response && response.isActive) {
+          setIsActive(true);
+          setStatus("Mic is running in the background (offscreen).");
+        }
+      } catch (err) {
+        console.error("Failed to check mic status:", err);
       }
-    });
+    })();
   }, []);
 
   const handleStartMic = async () => {
@@ -68,7 +77,7 @@ function App() {
       if (permissionStatus.state === "granted") {
         startMicProcess();
       } else {
-        chrome.tabs.create({ url: "permission.html" });
+        await ext.tabs.create({ url: "permission.html" });
         window.close();
       }
     } catch (err) {
@@ -84,8 +93,11 @@ function App() {
     }
   };
 
-  const startMicProcess = () => {
-    chrome.runtime.sendMessage({ action: "startMic" }, (response) => {
+  const startMicProcess = async () => {
+    try {
+      const response: any = await ext.runtime.sendMessage({
+        action: "startMic",
+      });
       console.log("Mic started", response);
       if (response && response.success) {
         setIsActive(true);
@@ -93,11 +105,17 @@ function App() {
       } else if (response && response.error) {
         setStatus(`Error: ${response.error}`);
       }
-    });
+    } catch (err: any) {
+      console.error("Failed to start mic:", err);
+      setStatus(`Error: ${err.message}`);
+    }
   };
 
-  const stopMicProcess = () => {
-    chrome.runtime.sendMessage({ action: "stopMic" }, (response) => {
+  const stopMicProcess = async () => {
+    try {
+      const response: any = await ext.runtime.sendMessage({
+        action: "stopMic",
+      });
       console.log("Mic stopped", response);
       if (response && response.success) {
         setIsActive(false);
@@ -105,11 +123,15 @@ function App() {
       } else if (response && response.error) {
         setStatus(`Error: ${response.error}`);
       }
-    });
+    } catch (err: any) {
+      console.error("Failed to stop mic:", err);
+      setStatus(`Error: ${err.message}`);
+    }
   };
 
   return (
-    <div className="space-y-2 text-center font-sans">
+    <div className="group text-center">
+      <TopBar />
       <ButtonContainer
         isListening={isActive}
         isModelLoaded={true}
