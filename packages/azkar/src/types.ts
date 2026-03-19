@@ -16,5 +16,8 @@ export interface AzkarConfig {
 export interface ZikrInfo {
   id: string;
   text: string;
-  source: string;
+  source: {
+    name: string;
+    url: string;
+  };
 }
