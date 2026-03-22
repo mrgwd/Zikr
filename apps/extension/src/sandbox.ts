@@ -1,6 +1,5 @@
-import { INPUT_GAIN } from "@repo/audio-processing/constants";
-import type { EdgeImpulseClassifier } from "@repo/model/types";
-// import { loadFont } from "./utils/loadFont";
+import type { EdgeImpulseClassifier } from "@workspace/model/types";
+import { normalizeAudio } from "@workspace/audio-processing/utils";
 
 declare global {
   interface Window {
@@ -10,7 +9,6 @@ declare global {
   }
 }
 
-// loadFont();
 
 let classifier: any = null;
 let isModelLoaded = false;
@@ -59,16 +57,8 @@ window.addEventListener("message", (event) => {
       // We need to convert it back to Float32Array if it was serialized
       const audioData = new Float32Array(data);
 
-      // Process audio (Scale to int16 range)
-      const scaledAudioData = new Float32Array(audioData.length);
-      for (let i = 0; i < audioData.length; i++) {
-        const boosted = audioData[i] * INPUT_GAIN;
-        const clamped = boosted > 1 ? 1 : boosted < -1 ? -1 : boosted;
-        scaledAudioData[i] = clamped * 32768.0;
-      }
-
       // Run inference
-      const result = classifier.classify(scaledAudioData, false);
+      const result = classifier.classify(normalizeAudio(audioData), false);
 
       console.log("Sandbox: Inference result:", result);
 
