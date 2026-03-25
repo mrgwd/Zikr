@@ -2,7 +2,7 @@
 
 import { cn } from "@workspace/lib/utils";
 import { type Detections } from "@workspace/model/types";
-import ZikrCard from "./ZikrCard";
+import { buttonVariants } from "../components/button";
 
 export default function ZikrList({
   list,
@@ -17,17 +17,20 @@ export default function ZikrList({
     <div className="grid grid-cols-2 gap-2">
       {Object.entries(list)
         .filter(([_, zikr]) => zikr.render)
-        .map(([id, zikr]) => {
+        .map(([id, zikr], index) => {
           return (
-            <LinkComponent key={id} href={href + "/" + id}>
-              <ZikrCard
-                className={cn(
-                  zikr.count % 2 === 0 ? "shimmer-even" : "shimmer-odd",
-                )}
-              >
-                <ZikrCard.Header>{zikr.label}</ZikrCard.Header>
-                <ZikrCard.Count>{zikr.count}</ZikrCard.Count>
-              </ZikrCard>
+            <LinkComponent
+              key={id}
+              href={href + "/" + id}
+              className={cn(
+                "animate-fade w-full cursor-pointer font-bold opacity-0",
+                buttonVariants({ variant: "secondary", size: "lg" }),
+                zikr.count % 2 === 0 ? "shimmer-even" : "shimmer-odd",
+              )}
+              style={{ animationDelay: `${(index + 1) * 50}ms` }}
+            >
+              {zikr.label}
+              <span>{zikr.count}</span>
             </LinkComponent>
           );
         })}
