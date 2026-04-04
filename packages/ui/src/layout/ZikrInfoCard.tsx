@@ -12,7 +12,7 @@ export default function ZikrInfoCard({
   return (
     <div
       style={style}
-      className={cn("bg-muted space-y-2 rounded-xl p-3", className)}
+      className={cn("bg-secondary space-y-2 rounded-xl p-3", className)}
     >
       {children}
     </div>

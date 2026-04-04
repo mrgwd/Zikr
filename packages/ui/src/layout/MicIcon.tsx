@@ -39,7 +39,7 @@ export default function MicIcon({ isListening }: { isListening: boolean }) {
             ? "dark:stroke-secondary-foreground translate-x-14 rotate-90"
             : "opacity-0",
         )}
-        id="line-2"
+        id="line-1"
         d="M17 24H30"
         strokeWidth="4"
         strokeLinecap="round"
@@ -63,7 +63,7 @@ export default function MicIcon({ isListening }: { isListening: boolean }) {
             ? "dark:stroke-secondary-foreground translate-x-10 rotate-90"
             : "opacity-0",
         )}
-        id="line-2"
+        id="line-3"
         d="M15 24H34"
         strokeWidth="4"
         strokeLinecap="round"
@@ -75,7 +75,7 @@ export default function MicIcon({ isListening }: { isListening: boolean }) {
             ? "dark:stroke-secondary-foreground translate-x-14 rotate-90"
             : "",
         )}
-        id="line-1"
+        id="line-4"
         d="M21 16H27"
         strokeWidth="4"
         strokeLinecap="round"
@@ -87,7 +87,7 @@ export default function MicIcon({ isListening }: { isListening: boolean }) {
             ? "dark:stroke-secondary-foreground translate-x-6 rotate-90"
             : "opacity-0",
         )}
-        id="line-1"
+        id="line-5"
         d="M21 16H27"
         strokeWidth="4"
         strokeLinecap="round"
