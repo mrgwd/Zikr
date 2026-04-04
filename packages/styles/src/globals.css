@@ -1,12 +1,9 @@
 @import "tailwindcss";
-/* @import "tw-animate-css"; */
+@import "tw-animate-css";
 /* @import "shadcn/tailwind.css"; */
-@import "tailwindcss";
 @source "../../../apps/**/*.{ts,tsx}";
 @source "../../../packages/ui/src/**/*.{ts,tsx}";
 @source "../**/*.{ts,tsx}";
-
-@import "tw-animate-css";
 
 :root {
   --background: oklch(1 0 0);
@@ -18,8 +15,10 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
 
-  --primary: oklch(0.205 0 0);
+  --primary: oklch(25.197% 0.00003 271.152);
   --primary-foreground: oklch(0.985 0 0);
+
+  --brand: oklch(70.899% 0.09609 326.491);
 
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.1834 0 0);
@@ -29,6 +28,9 @@
 
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
+
+  --gold: oklch(76.055% 0.08736 52.625);
+  --gold-foreground: oklch(0.985 0 0);
 
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.577 0.245 27.325);
@@ -55,6 +57,8 @@
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
 
+  --color-brand: var(--brand);
+
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
 
@@ -63,6 +67,8 @@
 
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+
+  --color-gold: var(--gold);
 
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
@@ -83,6 +89,7 @@
   --animate-shimmer-a: shimmer-a 1s linear 1 forwards;
   --animate-shimmer-b: shimmer-b 1s linear 1 forwards;
   --animate-fade-down: fade-down 500ms ease-out forwards;
+  --animate-fade: fade 500ms ease-out forwards;
 
   @keyframes slow-spin {
     from {
@@ -91,6 +98,16 @@
 
     to {
       transform: rotate(360deg);
+    }
+  }
+
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
     }
   }
 
@@ -112,13 +129,13 @@
     }
 
     to {
-      height: var(--radix-accordion-content-height);
+      height: var(--accordion-panel-height);
     }
   }
 
   @keyframes accordion-up {
     from {
-      height: var(--radix-accordion-content-height);
+      height: var(--accordion-panel-height);
     }
 
     to {
@@ -150,7 +167,7 @@
 @custom-variant dark (&:is(.dark, .dark *));
 
 .dark {
-  --background: oklch(0.1745 0 0);
+  --background: oklch(24.776% 0.00003 271.152);
   --foreground: oklch(0.985 0 0);
 
   --card: oklch(0.145 0 0);
@@ -162,10 +179,10 @@
   --primary: oklch(0.985 0 0);
   --primary-foreground: oklch(0.205 0 0);
 
-  --secondary: oklch(0.2308 0 0);
+  --secondary: oklch(28.094% 0.00003 271.152);
   --secondary-foreground: oklch(0.985 0 0);
 
-  --muted: oklch(0.269 0 0);
+  --muted: oklch(33.289% 0.00004 271.152);
   --muted-foreground: oklch(0.708 0 0);
 
   --accent: oklch(0.269 0 0);
