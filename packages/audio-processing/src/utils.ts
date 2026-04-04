@@ -1,4 +1,9 @@
-import { CONFIDENCE_THRESHOLD, MIN_RMS, TARGET_RMS, TARGET_SAMPLE_RATE } from "./constants";
+import {
+  CONFIDENCE_THRESHOLD,
+  MIN_RMS,
+  TARGET_RMS,
+  TARGET_SAMPLE_RATE,
+} from "./constants";
 import type {
   EdgeImpulseResult,
   EdgeImpulseResultItem,
@@ -26,7 +31,6 @@ export const resampleAudio = (
   }
   return result;
 };
-
 
 export const processClassifierResult = (
   result: EdgeImpulseResult,
@@ -57,34 +61,29 @@ export const processClassifierResult = (
 };
 
 export const processAudio = (audioData: Float32Array) => {
-  let sum = 0;
-  for (let i = 0; i < audioData.length; i++)
-    sum += audioData[i]! * audioData[i]!;
-  const rms = Math.sqrt(sum / audioData.length);
-  if (rms < 0.001) return;
-
   return normalizeAudio(audioData);
 };
 
-export const normalizeAudio = (audioData: Float32Array): Float32Array | null => {
-  // Compute RMS of this window
-  let sum = 0;
-  for (let i = 0; i < audioData.length; i++)
-    sum += audioData[i]! * audioData[i]!;
-  const rms = Math.sqrt(sum / audioData.length);
+export const normalizeAudio = (
+  audioData: Float32Array,
+): Float32Array | null => {
+  // Calculate RMS
+  let sumSq = 0;
+  for (let i = 0; i < audioData.length; i++) {
+    sumSq += audioData[i]! * audioData[i]!;
+  }
+  const rms = Math.sqrt(sumSq / audioData.length);
 
-  // Skip silence
+  // Below this = true silence, skip
   if (rms < MIN_RMS) return null;
 
-  // Compute gain needed to reach TARGET_RMS, but cap it to avoid
-  // amplifying background noise into something huge
-  const gain = Math.min(TARGET_RMS / rms, 10); // max 10x boost
-
   const out = new Float32Array(audioData.length);
+  // Scale so RMS = TARGET_RMS, then convert to int16 range
+  const scale = (TARGET_RMS / rms) * 32768.0;
+
   for (let i = 0; i < audioData.length; i++) {
-    const scaled = audioData[i]! * gain;
-    // Clamp to [-1, 1] then scale to int16 range for Edge Impulse
-    out[i] = Math.max(-1, Math.min(1, scaled)) * 32768.0;
+    // Clamp to int16 range to avoid overflow on loud audio
+    out[i] = Math.max(-32768, Math.min(32767, audioData[i]! * scale));
   }
   return out;
 };
