@@ -35,7 +35,7 @@ export function usePersistentMic(): UsePersistentMicResult {
     if (withAccuracy.length === 0) return null;
     // Return the one with the highest lastAccuracy (most recently detected)
     return withAccuracy.reduce((best, curr) =>
-      curr[1].lastAccuracy > best[1].lastAccuracy ? curr : best
+      curr[1].lastAccuracy > best[1].lastAccuracy ? curr : best,
     )[0];
   }, [detections, isListening]);
 
