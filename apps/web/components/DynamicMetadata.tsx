@@ -15,7 +15,9 @@ export function DynamicMetadata() {
       originalTitleRef.current = document.title || "Zikr AI";
     }
 
-    const icons = document.querySelectorAll('link[rel*="icon"]') as NodeListOf<HTMLLinkElement>;
+    const icons = document.querySelectorAll(
+      'link[rel*="icon"]',
+    ) as NodeListOf<HTMLLinkElement>;
     const defaultFavicon = "/favicon.ico";
     const listeningFavicon = "/listening.ico";
 
@@ -40,7 +42,7 @@ export function DynamicMetadata() {
       if (mic.activeZikr) {
         const detection = mic.detections[mic.activeZikr];
         if (detection) {
-          document.title = `(${detection.count}) ${detection.label} | ${originalTitleRef.current}`;
+          document.title = `(${detection.count}) ${detection.label}`;
         } else {
           document.title = `Listening... | ${originalTitleRef.current}`;
         }
@@ -54,7 +56,6 @@ export function DynamicMetadata() {
       }
     }
   }, [mic.isListening, mic.activeZikr, mic.detections]);
-
 
   return null; // This component doesn't render anything
 }

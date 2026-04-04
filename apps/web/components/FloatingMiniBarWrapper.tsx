@@ -27,7 +27,7 @@ export function FloatingMiniBarWrapper() {
       isOnHome={isOnHome}
       activeZikr={activeZikr}
       count={activeCount}
-      onNavigateHome={() => router.push("/")}
+      onNavigateHome={() => router.push("/app")}
       onStop={toggle}
     />
   );
