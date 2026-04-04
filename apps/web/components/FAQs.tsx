@@ -1,10 +1,15 @@
 "use client";
 
 import { cn } from "@workspace/lib/utils";
-import { Button, buttonVariants } from "@workspace/ui/components/button";
-import { ArrowRight, ChevronRight } from "@workspace/ui/index";
+import { buttonVariants } from "@workspace/ui/components/button";
 import Link from "next/link";
-import { useState } from "react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@workspace/ui/components/accordion";
+
 const faqs = [
   {
     question: "Does Katheera record my voice?",
@@ -47,12 +52,10 @@ const faqs = [
       "If you experience accuracy issues, you can adjust microphone sensitivity settings. You can also provide feedback to help improve the model.",
   },
 ];
-export function FAQ() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
+export function FAQ() {
   return (
     <section className="space-y-6">
-      {/* Header */}
       <div className="mb-14 text-center">
         <p className="text-primary mb-3 text-xs font-semibold tracking-widest uppercase">
           FAQ
@@ -62,41 +65,23 @@ export function FAQ() {
         </h2>
       </div>
 
-      <div className="space-y-3">
+      <Accordion className="space-y-4">
         {faqs.map((faq, index) => (
-          <button
+          <AccordionItem
             key={index}
-            onClick={() => setOpenIndex(openIndex === index ? null : index)}
-            className={`w-full rounded-xl text-left transition-all ${
-              openIndex === index
-                ? "bg-muted/50 border-border border"
-                : "bg-muted/50 hover:bg-muted border border-transparent"
-            }`}
+            value={`item-${index}`}
+            className="bg-muted/50 border-border/50 data-open:border-border/100 rounded-2xl border transition-all"
           >
-            <div className="flex items-center justify-between p-6">
-              <h3 className="text-foreground pr-4 font-semibold">
-                {faq.question}
-              </h3>
-              <ChevronRight
-                className={cn(
-                  "transition",
-                  openIndex === index ? "rotate-90" : "",
-                )}
-              />
-            </div>
-
-            {openIndex === index && (
-              <div className="border-border/50 border-t px-6 pt-4 pb-6">
-                <p className="text-foreground/70 leading-relaxed">
-                  {faq.answer}
-                </p>
-              </div>
-            )}
-          </button>
+            <AccordionTrigger className="text-foreground px-6 py-5 text-base font-semibold select-none hover:no-underline">
+              {faq.question}
+            </AccordionTrigger>
+            <AccordionContent className="text-foreground/70 px-6 pb-6 text-sm leading-relaxed">
+              {faq.answer}
+            </AccordionContent>
+          </AccordionItem>
         ))}
-      </div>
+      </Accordion>
 
-      {/* Contact */}
       <div className="bg-primary/5 border-primary/20 space-y-3 rounded-2xl border p-8 text-center">
         <p className="text-foreground font-semibold">Still have questions?</p>
         <p className="text-foreground/70">
