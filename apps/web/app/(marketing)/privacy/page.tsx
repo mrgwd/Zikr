@@ -55,7 +55,10 @@ export default function Privacy() {
 
       <main className="layout pt-32 pb-24">
         {/* Header */}
-        <div className="mb-12">
+        <div
+          className="animate-fade mb-12 opacity-0"
+          style={{ animationDelay: "100ms" }}
+        >
           <p className="text-muted-foreground mb-3 text-sm">
             Last updated: 2026
           </p>
@@ -74,12 +77,19 @@ export default function Privacy() {
         </div>
 
         {/* Divider */}
-        <div className="border-border mb-12 border-t" />
+        <div
+          className="border-border animate-fade mb-12 border-t opacity-0"
+          style={{ animationDelay: "200ms" }}
+        />
 
         {/* Sections */}
         <div className="space-y-10">
           {sections.map((section, i) => (
-            <div key={i}>
+            <div
+              key={i}
+              className="animate-fade opacity-0"
+              style={{ animationDelay: `${i * 100 + 100}ms` }}
+            >
               <h2 className="text-foreground mb-3 text-lg font-semibold">
                 {section.title}
               </h2>
