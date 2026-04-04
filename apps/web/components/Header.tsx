@@ -3,7 +3,7 @@ import Link from "next/link";
 import Logo from "./Logo";
 import { usePathname } from "next/navigation";
 import { cn } from "@workspace/lib/utils";
-import { Button, buttonVariants } from "@workspace/ui/components/button";
+import { buttonVariants } from "@workspace/ui/components/button";
 const links = [
   { href: "/", label: "Home" },
   { href: "/privacy", label: "Privacy" },
@@ -13,7 +13,7 @@ export default function Header() {
   const pathname = usePathname();
   return (
     <header>
-      <nav className="layout flex items-center justify-between py-4">
+      <nav className="layout flex items-center justify-between pt-12 pb-4">
         <Logo />
         <ul className="flex gap-2 sm:gap-4">
           {links.map((link) => (

@@ -5,16 +5,16 @@ import Link from "next/link";
 export default function Footer() {
   return (
     <footer className="bg-muted/40 border-border mt-16 border-t md:mt-24">
-      <div className="layout px-6 py-14">
+      <div className="layout py-14 max-sm:px-2">
         {/* Top grid */}
-        <div className="mb-12 grid grid-cols-2 gap-10 md:grid-cols-4">
+        <div className="mb-12 grid grid-cols-2 flex-wrap gap-12 md:flex md:justify-between">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <div className="mb-4 flex items-center gap-2">
               <Image src="/logo.png" alt="Logo" width={16} height={16} />
               <p className="text-sm font-bold">Katheera</p>
             </div>
-            <p className="text-muted-foreground text-sm leading-relaxed">
+            <p className="text-muted-foreground text-sm leading-relaxed md:max-w-40">
               Transform your silent moments into spiritual rewards with
               hands-free zikr counting.
             </p>
