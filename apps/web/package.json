@@ -4,8 +4,9 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "copy-model": "mkdir -p public/model && rm -rf public/model/* && cp -R ../../packages/model/src/model/* public/model/",
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "pnpm copy-model && next build",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix"
