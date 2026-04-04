@@ -5,8 +5,7 @@
   "private": true,
   "exports": {
     "./modelService": "./src/ModelService.ts",
-    "./types": "./src/types.ts",
-    "./hooks/useModelLoader": "./src/hooks/useModelLoader.ts"
+    "./types": "./src/types.ts"
   },
   "dependencies": {
     "react": "^19.2.4",

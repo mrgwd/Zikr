@@ -6,8 +6,6 @@
   "exports": {
     "./utils": "./src/utils.ts",
     "./registerServiceWorker": "./src/registerServiceWorker.ts",
-    "./useKeywordSpotting": "./src/useKeywordSpotting.ts",
-    "./useMicrophone": "./src/useMicrophone",
     "./zikrStorage": "./src/zikrStorage.ts",
     "./usePersistentMic.types": "./src/usePersistentMic.types.ts"
   },
