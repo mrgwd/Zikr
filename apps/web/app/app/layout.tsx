@@ -33,6 +33,9 @@ export default function AppLayout({
         <DynamicMetadata />
         {children}
         <FloatingMiniBarWrapper />
+        <p className="text-muted-foreground absolute bottom-4 left-1/2 -translate-x-1/2 text-center text-xs">
+          v0.1.0-beta.2
+        </p>
       </Providers>
     </main>
   );
