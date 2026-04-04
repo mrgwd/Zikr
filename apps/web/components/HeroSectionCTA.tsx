@@ -9,7 +9,7 @@ export default function HeroSectionCTA() {
   return (
     <div className="flex gap-2">
       <Link
-        href="#"
+        href="https://chromewebstore.google.com/detail/hajkcolmlblliodncplnekfjaonccifl"
         className={cn(
           "rounded-full! px-6!",
           buttonVariants({ variant: "default", size: "lg" }),
