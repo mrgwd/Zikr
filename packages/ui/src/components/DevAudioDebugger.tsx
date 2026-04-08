@@ -67,7 +67,10 @@ export const DevAudioDebugger = ({
   }
 
   return (
-    <div className="fixed right-0 bottom-0 z-50 flex max-h-[80vh] w-full flex-col gap-3 overflow-hidden overflow-x-hidden rounded-t-xl border border-zinc-200 bg-white p-3 text-xs shadow-xl sm:w-[400px] md:right-4 md:bottom-16 md:h-[600px] dark:border-zinc-800 dark:bg-zinc-900">
+    <div
+      dir="ltr"
+      className="fixed right-0 bottom-0 z-50 flex max-h-[80vh] w-full flex-col gap-3 overflow-hidden overflow-x-hidden rounded-t-xl border border-zinc-200 bg-white p-3 text-xs shadow-xl sm:w-[400px] md:right-4 md:bottom-16 md:h-[600px] dark:border-zinc-800 dark:bg-zinc-900"
+    >
       <div className="flex shrink-0 items-center justify-between border-b pb-2 dark:border-zinc-800">
         <h3 className="font-bold">🐞 Audio Debugger</h3>
         <button
