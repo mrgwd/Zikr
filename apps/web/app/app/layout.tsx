@@ -5,6 +5,7 @@ import { DynamicMetadata } from "@/components/DynamicMetadata";
 import { AppBootstrapper } from "@/components/AppBootstrapper";
 import { Providers } from "@/components/Providers";
 import { FloatingMiniBarWrapper } from "@/components/FloatingMiniBarWrapper";
+import { DevAudioDebugger } from "@workspace/ui/components/DevAudioDebugger";
 
 const vazirmatn = Vazirmatn({
   subsets: ["latin"],
@@ -32,6 +33,9 @@ export default function AppLayout({
       <Providers>
         <DynamicMetadata />
         {children}
+        {/* {process.env.NODE_ENV === "development" && ( */}
+        <DevAudioDebugger />
+        {/* )} */}
         <FloatingMiniBarWrapper />
         <p className="text-muted-foreground absolute bottom-4 left-1/2 -translate-x-1/2 text-center text-xs">
           v0.1.0-beta.2
