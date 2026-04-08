@@ -86,7 +86,7 @@ export function useKeywordSpotting() {
         if (!result?.results) return;
 
         // Dispatch debug info
-        if (process.env.NODE_ENV === "development" && typeof window !== "undefined") {
+        if (/*process.env.NODE_ENV === "development" && */typeof window !== "undefined") {
           window.dispatchEvent(
             new CustomEvent("debugAudioChunk", {
               detail: {
