@@ -10,4 +10,7 @@ export {
   ArrowRight,
   ChevronRight,
   Chrome,
+  Info,
+  Settings,
+  X,
 } from "lucide-react";

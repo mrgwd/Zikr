@@ -3,7 +3,18 @@
 import { useEffect, useState, useRef } from "react";
 import { Button } from "./button";
 import { AzkarList } from "@workspace/azkar/constants";
-import { CONFIDENCE_THRESHOLD } from "@workspace/audio-processing/constants";
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
+import { ScrollArea, ScrollBar } from "./scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./select";
+import { Badge } from "./badge";
+import { Card } from "./card";
 
 export type DebugChunk = {
   rawAudio: number[];
@@ -12,10 +23,7 @@ export type DebugChunk = {
   timestamp: number;
 };
 
-interface DevAudioDebuggerProps {
-  /** Confidence value (0–1) above which a result is highlighted green. */
-  confidenceThreshold?: number;
-}
+import { useSettings } from "../hooks/useSettings";
 
 /**
  * DevAudioDebugger
@@ -31,26 +39,52 @@ interface DevAudioDebuggerProps {
  * Layout: bottom-sheet style (inset-x-0 bottom-0 max-h-[90vh]) so it works
  * in both full-page web apps and narrower extension popups without overflowing.
  */
-export const DevAudioDebugger = ({
-  confidenceThreshold = CONFIDENCE_THRESHOLD,
-}: DevAudioDebuggerProps) => {
-  const [chunks, setChunks] = useState<DebugChunk[]>([]);
+export const DevAudioDebugger = ({ apiKey }: { apiKey?: string }) => {
+  const { settings } = useSettings();
+  const confidenceThreshold = settings.confidenceThreshold;
+  const [chunks, setChunks] = useState<Record<string, DebugChunk[]>>({
+    all: [],
+  });
   const [isOpen, setIsOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("all");
 
   useEffect(() => {
     const handleDebugAudio = (e: Event) => {
       const detail = (e as CustomEvent).detail as Omit<DebugChunk, "timestamp">;
+      const newChunk = { ...detail, timestamp: Date.now() };
+
       setChunks((prev) => {
-        const newChunks = [{ ...detail, timestamp: Date.now() }, ...prev];
-        if (newChunks.length > 20) newChunks.pop();
-        return newChunks;
+        const next = { ...prev };
+
+        // Add to "all" tab
+        const allChunks = [newChunk, ...(next.all || [])];
+        if (allChunks.length > 30) allChunks.pop();
+        next.all = allChunks;
+
+        // Add to specific keyword tab if successful
+        const bestResult = newChunk.results.reduce(
+          (prev, current) => (prev.value > current.value ? prev : current),
+          newChunk.results[0] || { label: "none", value: 0 },
+        );
+
+        if (
+          bestResult.value > confidenceThreshold &&
+          bestResult.label !== "noise"
+        ) {
+          const key = bestResult.label;
+          const keyChunks = [newChunk, ...(next[key] || [])];
+          if (keyChunks.length > 30) keyChunks.pop();
+          next[key] = keyChunks;
+        }
+
+        return next;
       });
     };
 
     window.addEventListener("debugAudioChunk", handleDebugAudio);
     return () =>
       window.removeEventListener("debugAudioChunk", handleDebugAudio);
-  }, []);
+  }, [confidenceThreshold]);
 
   if (!isOpen) {
     return (
@@ -65,6 +99,8 @@ export const DevAudioDebugger = ({
       </Button>
     );
   }
+
+  const activeChunks = chunks[activeTab] || [];
 
   return (
     <div
@@ -81,21 +117,56 @@ export const DevAudioDebugger = ({
         </button>
       </div>
 
-      <div className="flex flex-1 flex-col gap-3 overflow-x-hidden overflow-y-auto">
-        {chunks.length === 0 ? (
-          <div className="py-8 text-center text-zinc-500">
-            No audio chunks yet. Start listening!
-          </div>
-        ) : (
-          chunks.map((chunk, i) => (
-            <AudioChunkView
-              key={chunk.timestamp + i}
-              chunk={chunk}
-              confidenceThreshold={confidenceThreshold}
-            />
-          ))
-        )}
-      </div>
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="flex flex-1 flex-col overflow-hidden"
+      >
+        <div className="shrink-0 border-b border-zinc-200 dark:border-zinc-800">
+          <ScrollArea className="w-full pb-2">
+            <TabsList className="inline-flex h-auto w-auto gap-1 bg-transparent p-0">
+              <TabsTrigger
+                value="all"
+                className="rounded-md px-3 py-1.5 text-xs data-[state=active]:bg-zinc-100 dark:data-[state=active]:bg-zinc-800"
+              >
+                All
+              </TabsTrigger>
+              {AzkarList.map((a) => (
+                <TabsTrigger
+                  key={a.id}
+                  value={a.id}
+                  className="rounded-md px-3 py-1.5 text-xs data-[state=active]:bg-zinc-100 dark:data-[state=active]:bg-zinc-800"
+                >
+                  {a.id}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            <ScrollBar orientation="horizontal" className="h-1.5" />
+          </ScrollArea>
+        </div>
+
+        <div className="flex-1 overflow-x-hidden overflow-y-auto">
+          <TabsContent
+            value={activeTab}
+            className="mt-0 flex flex-col gap-3 pt-1 pb-2 outline-none"
+          >
+            {activeChunks.length === 0 ? (
+              <div className="py-8 text-center text-zinc-500">
+                No audio chunks yet. Start listening!
+              </div>
+            ) : (
+              activeChunks.map((chunk, i) => (
+                <AudioChunkView
+                  key={chunk.timestamp + i}
+                  chunk={chunk}
+                  confidenceThreshold={confidenceThreshold}
+                  apiKey={apiKey}
+                />
+              ))
+            )}
+          </TabsContent>
+        </div>
+      </Tabs>
     </div>
   );
 };
@@ -103,16 +174,16 @@ export const DevAudioDebugger = ({
 const AudioChunkView = ({
   chunk,
   confidenceThreshold,
+  apiKey,
 }: {
   chunk: DebugChunk;
   confidenceThreshold: number;
+  apiKey?: string;
 }) => {
   const rawCanvasRef = useRef<HTMLCanvasElement>(null);
   const procCanvasRef = useRef<HTMLCanvasElement>(null);
 
-  const [uploadLabel, setUploadLabel] = useState<string>(
-    AzkarList[0]?.id || "noise",
-  );
+  const [uploadLabel, setUploadLabel] = useState<string>("");
   const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
@@ -130,11 +201,6 @@ const AudioChunkView = ({
   );
 
   const isGood = bestResult.value > confidenceThreshold;
-  const badgeClass =
-    "font-bold px-2 py-0.5 rounded text-[10px] " +
-    (isGood
-      ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-      : "bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400");
 
   const playAudio = (data: number[]) => {
     const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
@@ -164,75 +230,108 @@ const AudioChunkView = ({
   };
 
   const uploadWav = async (data: number[]) => {
-    try {
-      setIsUploading(true);
-      const apiKey =
-        (typeof process !== "undefined" &&
-          process.env.NEXT_PUBLIC_EDGE_IMPULSE_API_KEY) ||
-        (typeof import.meta !== "undefined" && (import.meta as any).env
-          ? (import.meta as any).env.VITE_EDGE_IMPULSE_API_KEY
-          : "") ||
-        (typeof process !== "undefined" && process.env.EDGE_IMPULSE_API_KEY);
-
-      if (!apiKey) {
-        alert("Missing EDGE_IMPULSE_API_KEY in environment variables.");
-        return;
-      }
-
-      // 1. Prepare the standard WAV blob
-      const blob = createWavBlob(data);
-      const fileName = `sample_${Date.now()}.wav`;
-
-      // 2. IMPORTANT: Use the /files endpoint instead of /data
-      const endpoint = Math.random() < 0.8 ? "training" : "testing";
-      const url = `https://ingestion.edgeimpulse.com/api/${endpoint}/files`;
-
-      // 3. Use FormData (The /files endpoint loves this)
-      const formData = new FormData();
-      formData.append("data", blob, fileName);
-
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "x-api-key": apiKey,
-          "x-label": uploadLabel,
-          // DO NOT set Content-Type header; let the browser set the multipart boundary
-        },
-        body: formData,
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(`Upload failed: ${JSON.stringify(result)}`);
-      }
-      alert(`Uploaded to ${endpoint} successfully as '${uploadLabel}'`);
-    } catch (e: any) {
-      alert(e.message || "Failed to upload.");
-      console.error(e);
-    } finally {
-      setIsUploading(false);
+    if (!uploadLabel) return;
+    if (!apiKey) {
+      alert(
+        "Missing EDGE_IMPULSE_API_KEY. Pass it as a prop to DevAudioDebugger.",
+      );
+      return;
     }
+
+    // 1. Prepare the standard WAV blob
+    const blob = createWavBlob(data);
+    const fileName = `sample_${Date.now()}.wav`;
+
+    // 2. IMPORTANT: Use the /files endpoint instead of /data
+    const endpoint = Math.random() < 0.8 ? "training" : "testing";
+    const url = `https://ingestion.edgeimpulse.com/api/${endpoint}/files`;
+
+    // 3. Use FormData (The /files endpoint loves this)
+    const formData = new FormData();
+    formData.append("data", blob, fileName);
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "x-api-key": apiKey,
+        "x-label": uploadLabel,
+        // DO NOT set Content-Type header; let the browser set the multipart boundary
+      },
+      body: formData,
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(`Upload failed: ${JSON.stringify(result)}`);
+    }
+    alert(`Uploaded to ${endpoint} successfully as '${uploadLabel}'`);
+    setIsUploading(false);
   };
 
   return (
-    <div className="flex shrink-0 flex-col gap-2 rounded-lg border border-zinc-200 bg-zinc-50 p-2 text-xs dark:border-zinc-800 dark:bg-zinc-950">
-      <div className="flex items-center justify-between font-mono">
-        <span className="text-zinc-500">
-          {new Date(chunk.timestamp).toLocaleTimeString()}
-        </span>
-        <span className={badgeClass}>
-          {bestResult.label}: {bestResult.value.toFixed(2)}
-        </span>
+    <Card className="flex shrink-0 flex-col gap-1.5 overflow-visible rounded-md border-zinc-200 bg-zinc-50 p-2 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+      {/* Top Row: Info and Actions */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="font-mono text-[9px] text-zinc-500">
+            {new Date(chunk.timestamp).toLocaleTimeString()}
+          </span>
+          <Badge
+            variant={isGood ? "default" : "secondary"}
+            className={
+              "h-4 px-1.5 py-0 text-[9px] leading-none font-medium " +
+              (isGood
+                ? "bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400"
+                : "bg-zinc-200 text-zinc-600 hover:bg-zinc-300 dark:bg-zinc-800 dark:text-zinc-400")
+            }
+          >
+            {bestResult.label}: {bestResult.value.toFixed(2)}
+          </Badge>
+        </div>
+
+        <div className="flex items-center gap-1">
+          <Select
+            value={uploadLabel}
+            onValueChange={(val: string | null) => setUploadLabel(val || "")}
+          >
+            <SelectTrigger className="h-5! min-h-0 border-zinc-200 px-1.5 py-0 text-[9px] shadow-none dark:border-zinc-800">
+              <SelectValue placeholder="Select Label" />
+            </SelectTrigger>
+            <SelectContent>
+              {AzkarList.map((a) => (
+                <SelectItem
+                  key={a.id}
+                  value={a.id}
+                  className="rounded-none p-1! px-2! text-[10px]"
+                >
+                  {a.id}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button
+            variant="outline"
+            onClick={() => uploadWav(chunk.processedAudio)}
+            title="Upload to Edge Impulse"
+            disabled={isUploading || !uploadLabel}
+            className="h-5 min-h-0 border-zinc-200 px-1.5 py-0 text-[10px] shadow-none dark:border-zinc-800"
+          >
+            {isUploading ? "⏳" : "☁️"}
+          </Button>
+        </div>
       </div>
+
+      {/* Middle Row: Canvases side by side */}
       <div className="flex gap-2">
-        <div className="flex-1">
-          <div className="mb-1 flex items-center justify-between text-[10px] text-zinc-500">
+        <div className="min-w-0 flex-1">
+          <div className="mb-0.5 flex items-center justify-between text-[9px] leading-none text-zinc-500">
             <span className="flex items-center gap-1">
               Raw
               <button
                 onClick={() => playAudio(chunk.rawAudio)}
                 title="Play raw"
+                className="transition-transform hover:scale-110"
               >
                 ▶️
               </button>
@@ -242,72 +341,60 @@ const AudioChunkView = ({
           <canvas
             ref={rawCanvasRef}
             width={160}
-            height={40}
-            className="w-full rounded border bg-white dark:border-zinc-800 dark:bg-black"
+            height={24}
+            className="w-full rounded-[3px] border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-black"
           />
         </div>
-        <div className="flex-1">
-          <div className="mb-1 flex items-center justify-between text-[10px] text-zinc-500">
+
+        <div className="min-w-0 flex-1">
+          <div className="mb-0.5 flex items-center justify-between text-[9px] leading-none text-zinc-500">
             <span className="flex items-center gap-1">
               Proc
               <button
                 onClick={() => playAudio(chunk.processedAudio)}
                 title="Play processed"
+                className="transition-transform hover:scale-110"
               >
                 ▶️
               </button>
               <button
                 onClick={() => downloadWav(chunk.processedAudio)}
                 title="Download WAV"
+                className="ml-0.5 transition-transform hover:scale-110"
               >
                 💾
               </button>
-              <span className="relative ml-1 flex items-center space-x-1 border-l pl-2 dark:border-zinc-700">
-                <select
-                  value={uploadLabel}
-                  onChange={(e) => setUploadLabel(e.target.value)}
-                  className="w-14 rounded border bg-transparent p-0 text-[10px] outline-none dark:border-zinc-700"
-                >
-                  {AzkarList.map((a) => (
-                    <option key={a.id} value={a.id}>
-                      {a.id}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  onClick={() => uploadWav(chunk.processedAudio)}
-                  title="Upload to Edge Impulse"
-                  disabled={isUploading}
-                  className="disabled:opacity-50"
-                >
-                  {isUploading ? "⏳" : "☁️"}
-                </button>
-              </span>
             </span>
             <span>n={chunk.processedAudio.length}</span>
           </div>
           <canvas
             ref={procCanvasRef}
             width={160}
-            height={40}
-            className="w-full rounded border bg-white dark:border-zinc-800 dark:bg-black"
+            height={24}
+            className="w-full rounded-[3px] border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-black"
           />
         </div>
       </div>
-      <div className="flex flex-wrap gap-1">
-        {chunk.results
-          .filter((r) => r.value > 0.05)
-          .sort((a, b) => b.value - a.value)
-          .map((r) => (
-            <span
-              key={r.label}
-              className="rounded bg-zinc-200/50 px-1 text-[10px] text-zinc-600 dark:bg-zinc-800/50"
-            >
-              {r.label}: {r.value.toFixed(2)}
-            </span>
-          ))}
-      </div>
-    </div>
+
+      {/* Bottom Row: Additional labels */}
+      {chunk.results.filter(
+        (r) => r.value > 0.05 && r.label !== bestResult.label,
+      ).length > 0 && (
+        <div className="mt-0.5 flex flex-wrap gap-1">
+          {chunk.results
+            .filter((r) => r.value > 0.05 && r.label !== bestResult.label)
+            .sort((a, b) => b.value - a.value)
+            .map((r) => (
+              <span
+                key={r.label}
+                className="rounded bg-zinc-200/50 px-1 py-0 text-[8px] leading-tight text-zinc-500 dark:bg-zinc-800/50"
+              >
+                {r.label}: {r.value.toFixed(2)}
+              </span>
+            ))}
+        </div>
+      )}
+    </Card>
   );
 };
 
