@@ -7,7 +7,8 @@
     "./utils": "./src/utils.ts",
     "./registerServiceWorker": "./src/registerServiceWorker.ts",
     "./zikrStorage": "./src/zikrStorage.ts",
-    "./usePersistentMic.types": "./src/usePersistentMic.types.ts"
+    "./usePersistentMic.types": "./src/usePersistentMic.types.ts",
+    "./settings": "./src/settings.ts"
   },
   "main": "./src/utils.ts",
   "types": "./src/utils.ts",
