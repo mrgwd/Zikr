@@ -214,3 +214,9 @@
 .shimmer-odd {
   @apply before:animate-shimmer-b relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:border-t before:border-rose-100/10 before:bg-linear-to-r before:from-transparent before:via-rose-100/10 before:to-transparent before:content-[''];
 }
+
+@media (hover: none) {
+  .settings-panel-button {
+    @apply opacity-100!;
+  }
+}
