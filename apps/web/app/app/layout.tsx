@@ -1,5 +1,5 @@
-import { Vazirmatn } from "next/font/google";
 import "../../globals.css";
+import { Vazirmatn } from "next/font/google";
 import { Metadata } from "next";
 import { DynamicMetadata } from "@/components/DynamicMetadata";
 import { AppBootstrapper } from "@/components/AppBootstrapper";
@@ -33,9 +33,9 @@ export default function AppLayout({
       <Providers>
         <DynamicMetadata />
         {children}
-        {/* {process.env.NODE_ENV === "development" && ( */}
-        <DevAudioDebugger />
-        {/* )} */}
+        <DevAudioDebugger
+          apiKey={process.env.NEXT_PUBLIC_EDGE_IMPULSE_API_KEY}
+        />
         <FloatingMiniBarWrapper />
         <p className="text-muted-foreground absolute bottom-4 left-1/2 -translate-x-1/2 text-center text-xs">
           v0.1.0-beta.2
