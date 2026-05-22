@@ -1,9 +1,12 @@
+import { TooltipProvider } from "../components/tooltip";
 import SettingsPanel from "./SettingsPanel";
 
 export function TopBar() {
   return (
     <div>
-      <SettingsPanel />
+      <TooltipProvider>
+        <SettingsPanel />
+      </TooltipProvider>
     </div>
   );
 }
