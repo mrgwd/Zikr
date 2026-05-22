@@ -41,11 +41,11 @@ export const processClassifierResult = (
 
   if (!result || !result.results) return null;
 
-  // Log all results to see what's happening
-  console.log(
-    "Full predictions:",
-    result.results.map((r) => `${r.label}: ${r.value.toFixed(2)}`).join(", "),
-  );
+  // // Log all results to see what's happening
+  // console.log(
+  //   "Full predictions:",
+  //   result.results.map((r) => `${r.label}: ${r.value.toFixed(2)}`).join(", "),
+  // );
 
   result.results.forEach((prediction: EdgeImpulseResultItem) => {
     if (
@@ -60,13 +60,22 @@ export const processClassifierResult = (
   return detectedLabel;
 };
 
-export const processAudio = (audioData: Float32Array) => {
-  return normalizeAudio(audioData);
+export const processAudio = (
+  audioData: Float32Array,
+  targetRmsOverride?: number,
+  minRmsOverride?: number,
+) => {
+  return normalizeAudio(audioData, targetRmsOverride, minRmsOverride);
 };
 
 export const normalizeAudio = (
   audioData: Float32Array,
+  targetRmsOverride?: number,
+  minRmsOverride?: number,
 ): Float32Array | null => {
+  const effectiveTargetRms = targetRmsOverride ?? TARGET_RMS;
+  const effectiveMinRms = minRmsOverride ?? MIN_RMS;
+
   // Calculate RMS
   let sumSq = 0;
   for (let i = 0; i < audioData.length; i++) {
@@ -75,11 +84,11 @@ export const normalizeAudio = (
   const rms = Math.sqrt(sumSq / audioData.length);
 
   // Below this = true silence, skip
-  if (rms < MIN_RMS) return null;
+  if (rms < effectiveMinRms) return null;
 
   const out = new Float32Array(audioData.length);
-  // Scale so RMS = TARGET_RMS, then convert to int16 range
-  const scale = (TARGET_RMS / rms) * 32768.0;
+  // Scale so RMS = effectiveTargetRms, then convert to int16 range
+  const scale = (effectiveTargetRms / rms) * 32768.0;
 
   for (let i = 0; i < audioData.length; i++) {
     // Clamp to int16 range to avoid overflow on loud audio
